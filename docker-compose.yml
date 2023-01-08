@@ -1,0 +1,41 @@
+version: '3.7'
+services:
+  nginx:
+    build:
+      context: ./deployment/nginx
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - '${DOCKER_NGINX_WEB_PORT}:80'
+    volumes:
+      - .:/var/www/uny
+    depends_on:
+      - fpm
+
+  fpm:
+    build:
+      context: ./deployment/fpm
+      args:
+        DOCKER_CONTAINER_UID: ${DOCKER_CONTAINER_UID}
+        DOCKER_CONTAINER_GID: ${DOCKER_CONTAINER_GID}
+        APP_ENV: ${APP_ENV}
+    restart: always
+    env_file:
+      - .env
+    extra_hosts:
+      - "${DOCKER_FPM_PHP_EXTRAHOST}"
+    working_dir: /var/www/uny
+    volumes:
+      - .:/var/www/uny
+
+  mysql:
+    image: mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - "./docker/mysql/database/:/var/lib/mysql"
+    environment:
+      MYSQL_DATABASE: "uny_db"
+      MYSQL_USER: "uny_db"
+      MYSQL_PASSWORD: "uny_db"
+      MYSQL_ROOT_PASSWORD: "uny_db"
