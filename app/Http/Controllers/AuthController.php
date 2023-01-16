@@ -41,6 +41,7 @@ class AuthController extends Controller
      */
     public function me()
     {
+        $this->authorize('interest_create');
         return response()->json(auth()->user());
     }
 

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
+use App\Models\Role;
 use App\Models\User;
+use App\Support\Roles;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
@@ -16,15 +18,24 @@ class UserController extends Controller
      * @param StoreUserRequest $request
      * @return Response
      */
-    public function store(StoreUserRequest $request)
+    public function store(StoreUserRequest $request): Response
     {
-        $data = $request->validated();
-        $data['password'] = Hash::make($data['password']);
+        $this->authorize('role_create');
 
-        User::firstOrCreate([
+        $data = $request->validated();
+
+        $role = Role::firstOrCreate(['name' => 'User']);
+
+        $data = array_merge($data, [
+            'password' => Hash::make($data['password']),
+            'password_confirmation' => Hash::make($data['password_confirmation']),
+            'role_id' => $role->id
+        ]);
+
+        $newUser = User::firstOrCreate([
             'email' => $data['email'],
         ], $data);
 
-        return response([]);
+        return response($newUser);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Support\PolicyTypes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -22,6 +22,7 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'email',
         'password',
+        'role_id'
     ];
 
     /**
@@ -42,6 +43,26 @@ class User extends Authenticatable implements JWTSubject
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function role()
+    {
+        return $this->hasOne(Role::class, 'id', 'role_id');
+    }
+
+    public function hasPermission(string $policy): bool
+    {
+        return Policy::query()
+                ->where('name', '=', $policy)
+                ->where(function ($query) {
+                    $query->where([
+                        ['entity_type', '=', PolicyTypes::USERS],
+                        ['entity_id', '=', $this->id],
+                    ])->orWhere([
+                        ['entity_type', '=', PolicyTypes::ROLES],
+                        ['entity_id', '=', $this->role->id],
+                    ]);
+                })->get()->count() > 0;
+    }
 
     public function getJWTIdentifier()
     {

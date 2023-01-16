@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\InterestRequest;
-use App\Models\Interest;
+use App\Http\Requests\RoleRequest;
+use App\Models\Role;
 use Illuminate\Http\JsonResponse;
 use function response;
 
-class InterestController extends Controller
+class RoleController extends Controller
 {
     public function __construct()
     {
@@ -22,20 +22,20 @@ class InterestController extends Controller
      */
     public function index(): JsonResponse
     {
-        $interests = Interest::orderBy('id', 'desc')->get();
+        $roles = Role::orderBy('id', 'desc')->get();
 
-        return response()->json($interests);
+        return response()->json($roles);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param Interest $interest
+     * @param Role $role
      * @return JsonResponse
      */
-    public function show(Interest $interest): JsonResponse
+    public function show(Role $role): JsonResponse
     {
-        return response()->json($interest);
+        return response()->json($role);
     }
 
     /**
@@ -47,7 +47,7 @@ class InterestController extends Controller
      */
     public function find(string $by, string $value): JsonResponse
     {
-        $result = Interest::where($by, '=', $value)->firstOrFail();
+        $result = Role::where($by, '=', $value)->firstOrFail();
 
         return response()->json($result);
     }
