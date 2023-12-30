@@ -1,40 +1,40 @@
 version: '3.7'
 services:
 
-  node:
-    build:
-      context: ./frontend
-      dockerfile: ./../deployment/node/Dockerfile
-    restart: always
-    ports:
-      - '80:80'
-      - '3000:3000'
-    volumes:
-      - ./frontend:/var/www/html
-
-#  nginx:
-#    container_name: nginx
+#  node:
 #    build:
-#      context: ./deployment/nginx
-#      dockerfile: Dockerfile
+#      context: ./frontend
+#      dockerfile: ./../deployment/node/Dockerfile
 #    restart: always
 #    ports:
 #      - '80:80'
-#    depends_on:
-#      - octane
+#      - '3000:3000'
 #    volumes:
-#      - ./app/public:/var/www/showcase/public
-#
-#  octane:
-#    container_name: octane
-#    build:
-#      context: ./app
-#      dockerfile: ./../deployment/octane/Dockerfile
-#    restart: always
-#    env_file:
-#      - .env
-#    extra_hosts:
-#      - "host.docker.internal:host-gateway"
-#    working_dir: /var/www/showcase
-#    volumes:
-#      - ./app:/var/www/showcase
+#      - ./frontend:/var/www/html
+
+  nginx:
+    container_name: nginx
+    build:
+      context: ./deployment/nginx
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - '80:80'
+    depends_on:
+      - fpm
+    volumes:
+      - .:/var/www/uny
+
+  fpm:
+      container_name: fpm
+      build:
+          context: .
+          dockerfile: ./deployment/fpm/Dockerfile
+      restart: always
+      env_file:
+          - .env
+      extra_hosts:
+          - "host.docker.internal:host-gateway"
+      working_dir: /var/www/uny
+      volumes:
+          - .:/var/www/uny

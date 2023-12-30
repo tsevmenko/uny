@@ -5,8 +5,8 @@ ARG APP_ENV
 ARG DOCKER_CONTAINER_UID
 ARG DOCKER_CONTAINER_GID
 
-RUN usermod  --uid $DOCKER_CONTAINER_UID www-data
-RUN groupmod --gid $DOCKER_CONTAINER_GID www-data
+RUN usermod  --uid 1000 www-data
+RUN groupmod --gid 1001 www-data
 
 RUN apt-get update && apt-get install -y --no-install-recommends libzip-dev libpng-dev libfreetype6-dev \
   libjpeg62-turbo-dev libmemcached-dev nano build-essential cron
@@ -19,7 +19,7 @@ RUN apt-get install zip unzip
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-COPY cron/laravel-cron /etc/cron.d/laravel_cron
+COPY deployment/fpm/cron/laravel-cron /etc/cron.d/laravel_cron
 RUN chmod 0644 /etc/cron.d/laravel_cron \
     && crontab /etc/cron.d/laravel_cron \
     && touch /var/log/cron.log
