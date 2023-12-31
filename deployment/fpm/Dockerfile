@@ -29,10 +29,4 @@ RUN echo "memory_limit = 256M" >> "$PHP_INI_DIR/php.ini"
 RUN echo "upload_max_filesize = 128M" >> "$PHP_INI_DIR/php.ini"
 #RUN a2enmod rewrite
 
-RUN echo 'zend_extension=xdebug' > /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
-    echo '[xdebug]' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
-    echo 'xdebug.mode=develop,debug' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
-    echo 'xdebug.client_host=host.docker.internal' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
-    echo 'xdebug.start_with_request=yes' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-
 CMD ["php-fpm"]

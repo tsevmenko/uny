@@ -38,3 +38,15 @@ services:
       working_dir: /var/www/uny
       volumes:
           - .:/var/www/uny
+
+  mysql:
+    image: mysql
+    ports:
+        - "3306:3306"
+    volumes:
+        - "./docker/mysql/database/:/var/lib/mysql"
+    environment:
+        MYSQL_DATABASE: "uny_db"
+        MYSQL_USER: "uny_db"
+        MYSQL_PASSWORD: "uny_db"
+        MYSQL_ROOT_PASSWORD: "uny_db"
